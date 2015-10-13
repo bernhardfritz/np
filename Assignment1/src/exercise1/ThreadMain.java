@@ -1,4 +1,4 @@
-package exercise01;
+package exercise1;
 
 public class ThreadMain {
 
