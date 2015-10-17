@@ -12,7 +12,7 @@ public class TestBench {
 			CalculatePi.main(arr);
 			results.add(stopWatch.elapsedTime());
 		}
-		System.out.println("#threads|\ttime(s)");
+		System.out.println("#threads|\ttime[s]");
 		System.out.println("-----------------------");
 		for(int i = 1; i <= 20; i++) {
 			System.out.println(i + "\t|\t" + results.get(i-1));
