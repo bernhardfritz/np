@@ -7,12 +7,10 @@ import java.util.concurrent.Callable;
 public class CalculateTask implements Callable<BigDecimal> {
 	private int from;
 	private int to;
-	private int fractions;
 	
-	public CalculateTask(int from, int to, int fractions) {
+	public CalculateTask(int from, int to) {
 		this.from = from;
 		this.to = to;
-		this.fractions = fractions;
 	}
 	
 	@Override
@@ -28,6 +26,6 @@ public class CalculateTask implements Callable<BigDecimal> {
 		return BigDecimal.valueOf(-1).pow(n)
 				.divide(BigDecimal.valueOf(2)
 						.multiply(BigDecimal.valueOf(n))
-						.add(BigDecimal.ONE), fractions, RoundingMode.HALF_UP);
+						.add(BigDecimal.ONE), 100, RoundingMode.HALF_UP);
 	}
 }

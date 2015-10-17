@@ -32,7 +32,6 @@ public class CalculatePi {
 			threadCount = Integer.valueOf(args[0]);
 		}
 		int n = 100000000;
-		int fractionDigits = 100;
 		int stepsPerThread = n/threadCount; // int division
 		int desiredAmountOfFractions = 7;
 		
@@ -45,7 +44,7 @@ public class CalculatePi {
 			if(i == threadCount - 1) { // last thread has to do more work if n%threadCount != 0
 				to = n;
 			}
-			futures.add(executorService.submit(new CalculateTask(from, to, fractionDigits)));
+			futures.add(executorService.submit(new CalculateTask(from, to)));
 		}
 		for(Future<BigDecimal> future: futures) {
 			try {
