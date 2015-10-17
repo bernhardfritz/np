@@ -14,8 +14,8 @@ public class TestBench {
 		}
 		System.out.println("#threads|\ttime(s)");
 		System.out.println("-----------------------");
-		for(int i = 0; i < 20; i++) {
-			System.out.println(i + "\t|\t" + results.get(i));
+		for(int i = 1; i <= 20; i++) {
+			System.out.println(i + "\t|\t" + results.get(i-1));
 		}
 	}
 
