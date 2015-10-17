@@ -21,13 +21,17 @@ public class MyMonitoringThread extends Thread {
 		blockedThread.start();
 		terminatedThread.start();		
 		
-		while(true) {
+		for(int i = 0; ; i++) {
+			System.out.println("Elapsed time: " + i*3 + "s");
+			System.out.println("============================");
 			System.out.println(newThread.getName() + ": " + newThread.getState());
 			System.out.println(terminatedThread.getName() + ": " + terminatedThread.getState());
 			
 			for (Thread t : Thread.getAllStackTraces().keySet()) {
 				System.out.println(t.getName() + ": " + t.getState());
 			}
+			
+			System.out.println("============================");
 			System.out.println();
 			
 			try {
