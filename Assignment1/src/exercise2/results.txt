@@ -4,7 +4,7 @@ Memory: 8 GB 1600 MHz DDR3
 
 Using #threads to calculate n=10.000.000 iterations of the specified formula.
 The iterations are evenly distributed over all #threads.
-The program will stop if the desired amount of 7 fractions is reached early.
+The program will stop early if the desired amount of 7 fractions is already reached.
 
 #threads|		time(s)
 -----------------------
