@@ -1,0 +1,30 @@
+Tested on Sony Vaio Pro 13 running Ubuntu 14.04 LTS
+Processor: 1,6 GHz (x4) Intel Core i5
+Memory: 8 GB 1600 MHz DDR3
+
+Using #threads to calculate n=10.000.000 iterations of the specified formula.
+The iterations are evenly distributed over all #threads.
+The program will stop early if the desired amount of 7 fractions is already reached.
+
+#threads|		time[s]
+-----------------------
+1		|		42.15
+2		|		28.374
+3		|		21.827
+4		|		19.593
+5		|		24.546
+6		|		23.097
+7		|		24.436
+8		|		25.088
+9		|		25.683
+10		|		25.2
+11		|		25.745
+12		|		26.091
+13		|		25.794
+14		|		25.998
+15		|		27.935
+16		|		25.095
+17		|		25.348
+18		|		25.637
+19		|		25.642
+20		|		25.633
