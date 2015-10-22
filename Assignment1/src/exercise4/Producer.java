@@ -1,24 +1,32 @@
 package exercise4;
 
-public class Producer implements Runnable{
+public class Producer implements Runnable {
 	private Buffer buffer;
+	private String name;
 	
-	public Producer(Buffer buffer) {
+	public Producer(String name, Buffer buffer) {
+		this.name = name;
 		this.buffer = buffer;
 	}
 	
 	private void produce() {
-		while(true) {
-			int rand = (int) Math.random()*100;
+		int rand = 0;
+		do {
+			rand = (int) (Math.random()*100);
 			buffer.put(rand);
-			if(rand == 0) break;
 			sleep();
-		}
+		} while(rand != 0);
 	}
 
 	private void sleep() {
 		try {
-			Thread.sleep((int)(Math.random()*4)*1000); // sleep for [0,3] seconds
+			int t = (int)(Math.random()*4)*1000;
+			
+			String s = name + " sleeps for " + t/1000 + " second";
+			s += (t/1000 != 1) ? "s.\n" : ".\n";
+			System.out.println(s);
+			
+			Thread.sleep(t); // sleep for [0,3] seconds
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -27,5 +35,13 @@ public class Producer implements Runnable{
 	@Override
 	public void run() {
 		produce();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

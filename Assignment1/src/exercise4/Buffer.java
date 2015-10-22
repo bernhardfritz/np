@@ -12,13 +12,24 @@ public class Buffer {
 
 	public synchronized void put(Integer i) {
 		bufferList.add(i);
+		System.out.println(Thread.currentThread().getName() + " added " + i + " to the buffer.");
+		print();
 	}
 	
 	public synchronized Integer get() {
 		if (bufferList.isEmpty()) {
+			System.out.println(Thread.currentThread().getName() + " tried to remove an element from the empty buffer.");
+			print();
 			return null;
 		}
 		
-		return bufferList.remove(0);
+		Integer ret = bufferList.remove(0);
+		System.out.println(Thread.currentThread().getName() + " removed " + ret + " from the buffer.");
+		print();
+		return ret;
+	}
+	
+	public void print() {
+		System.out.println("Buffer: " + bufferList + "\n");
 	}
 }
