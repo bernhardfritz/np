@@ -4,32 +4,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Buffer {
+	String name;
 	private List<Integer> bufferList;
 	
-	public Buffer() {
+	public Buffer(String name) {
+		this.name = name;
 		this.bufferList = new ArrayList<Integer>();
 	}
 
 	public synchronized void put(Integer i) {
 		bufferList.add(i);
-		System.out.println(Thread.currentThread().getName() + " added " + i + " to the buffer.");
-		print();
+		Log.add(Thread.currentThread().getName() + " produced " + i + " - " + this);
+		notify();
 	}
 	
 	public synchronized Integer get() {
-		if (bufferList.isEmpty()) {
-			System.out.println(Thread.currentThread().getName() + " tried to remove an element from the empty buffer.");
-			print();
-			return null;
-		}
-		
-		Integer ret = bufferList.remove(0);
-		System.out.println(Thread.currentThread().getName() + " removed " + ret + " from the buffer.");
-		print();
-		return ret;
+		Integer tmp = bufferList.remove(0);
+		Log.add(Thread.currentThread().getName() + " consumes " + tmp + " - " + this);
+		return tmp;
 	}
 	
-	public void print() {
-		System.out.println("Buffer: " + bufferList + "\n");
+	public synchronized Integer peek() {
+		if(bufferList.isEmpty()) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		Integer ret = bufferList.get(0);
+		Log.add(Thread.currentThread().getName() + " peeked " + name);
+		return ret;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public synchronized String toString() {
+		return name + ": " + bufferList;
 	}
 }

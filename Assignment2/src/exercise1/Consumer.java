@@ -1,43 +1,43 @@
 package exercise1;
 
-public class Consumer implements Runnable {
-	private Buffer buffer;
-	private String name;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+public class Consumer extends Thread {
+	private List<Buffer> buffers;
+	private CountDownLatch latch;
 	
-	public Consumer(String name, Buffer buffer) {
-		this.name = name;
-		this.buffer = buffer;
+	public Consumer(String name, List<Buffer> buffers, CountDownLatch latch) {
+		setName(name);
+		this.buffers = buffers;
+		this.latch = latch;
 	}
 	
 	private void consume() {
-		Integer tmp = null;
-		do {
-			tmp = buffer.get();
-			if(tmp == null) {
-				sleep();
+		while(buffers.size() > 0) {
+			List<Buffer> trash = new ArrayList<Buffer>();
+			for(Buffer buffer : buffers) {
+				if(buffer.peek().equals(0)) {
+					trash.add(buffer);
+				}
 			}
-		} while(tmp == null || !tmp.equals(0));
-	}
-	
-	private void sleep() {
-		try {
-			System.out.println(name + " sleeps for 2 seconds.\n");
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			for(Buffer buffer : trash) {
+				buffers.remove(buffer);
+			}
+			for(Buffer buffer : buffers) {
+				buffer.get();
+			}
 		}
 	}
 	
-	@Override
 	public void run() {
-		consume();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		try {
+			latch.await();
+			consume();
+			Log.add(getName() + " stopped");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
