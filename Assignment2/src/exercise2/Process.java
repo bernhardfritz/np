@@ -2,6 +2,7 @@ package exercise2;
 
 import java.io.*; 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 
 // S.Ostermann
@@ -14,16 +15,21 @@ class Receive {
 }
 
 
-class Process extends Thread {
+public class Process extends Thread {
 
 	int pid; // process id
 	Process[] p; // references to all other processes
 	Receive[] receive; // the receive objects
+	
+	CountDownLatch startLatch;
+	CountDownLatch receiveLatch;
 
-	Process(int pid, int n) {
+	Process(int pid, int n, CountDownLatch startLatch, CountDownLatch receiveLatch) {
 		this.pid = pid;
+		this.startLatch = startLatch;
+		this.receiveLatch = receiveLatch;
 		
-		if (this.pid == 0) { // p0 creates the vector of references 
+		if (this.pid == 0) { // p0 creates the vector of references
 			this.p = new Process[n];
 			this.p[0] = this;
 		}
@@ -48,13 +54,12 @@ class Process extends Thread {
 
 	// called by sender
 	public void sendMessage(String m, int pid) {
-		/*TODO*/
+		p[this.pid].receive[pid].message = m;
 	}	
 
 	// called by a process to receive a message from another process
-	String receiveMessage(int i) {
-		/*TODO*/
-		return "";
+	public String receiveMessage(int i) {
+		return receive[i].message;
 	} 
 
 	// the activity of a process
@@ -62,12 +67,24 @@ class Process extends Thread {
 		String m;
 
 		if (pid == 0) {
-			//wait till all processes are created: TODO change to a better mechanism!
-			try{
-				Thread.sleep(3000);
-			} catch (Exception e) {
-				e.printStackTrace();
+//			try{
+//				Thread.sleep(3000);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+			try {
+				startLatch.await();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
 			}
+			
+			int c = 0;
+			for (Process pro : p) {
+				if (pro == null) {
+					c++;
+				}
+			}
+			System.out.println("asdf: " + c);
 
 			// p0 sends the reference vector to the others
 			p[pid] = (Process)this;
@@ -84,6 +101,7 @@ class Process extends Thread {
 			// wait until they got the reference vector
 			synchronized (this) {
 				try {
+					startLatch.countDown();
 					this.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -100,17 +118,24 @@ class Process extends Thread {
 					System.err.println("send exception: ");
 				}
 				
-				System.out.println("sent hello to p" + i);
+				System.out.println("p" + this.pid + " sent hello to p" + i);
 			}
+		}
+		
+		receiveLatch.countDown();
+		try {
+			receiveLatch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		// receive message from every other one
 		for (int i = p.length-1; i >= 0; i--) {
 //		for (int i = 0; i < p.length; i++) {
-			if (i!=pid)  {
-				System.out.println("receiving from p" + i + "...");
+			if (i != pid)  {
+				System.out.println("p" + this.pid + " receiving from p" + i + "...");
 				m = receiveMessage(i);
-				System.out.println("received from p" + i + ": " + m);
+				System.out.println("p" + this.pid + " received from p" + i + ": " + m);
 			}
 		}
 	}
@@ -119,15 +144,17 @@ class Process extends Thread {
 		int n = Integer.parseInt(args[0]);
 
 		System.out.println("number of processes: " + n);
-           
-		Process one = new Process(0, n);
+
+		CountDownLatch startLatch = new CountDownLatch(n-1);
+		CountDownLatch receiveLatch = new CountDownLatch(n);
+		
+		Process one = new Process(0, n, startLatch, receiveLatch);
 		one.start();
 
-
 		for (int i = 1; i < n; i++) {
-			Process temp = new Process(i, n);
+			Process temp = new Process(i, n, startLatch, receiveLatch);
 			one.register(temp, i);
 			temp.start();
-		}   		  
+		}
 	}
 }
