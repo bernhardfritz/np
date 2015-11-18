@@ -59,7 +59,7 @@ public class Consumer extends Thread {
 			
 			lock.unlock();
 			
-			// Consumer muss nach jeder Konsumierung kurz warten, um Verhungern anderer Consumer zu vermeiden
+			// Consumer muss nach jedem Konsum kurz warten, um das Verhungern anderer Consumer zu vermeiden
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
