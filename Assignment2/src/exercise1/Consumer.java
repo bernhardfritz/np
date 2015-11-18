@@ -51,7 +51,11 @@ public class Consumer extends Thread {
 			
 			lock.unlock();
 			
-			Thread.yield(); // to prevent starvation of other consumers
+			try {
+				Thread.sleep(1); // to prevent starvation of other consumers
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
 		}
 	}
 	
