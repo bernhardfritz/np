@@ -1,7 +1,6 @@
 package exercise1;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.Condition;
@@ -26,8 +25,11 @@ public class Consumer extends Thread {
 		while(buffers.size() > 0) {
 			lock.lock();
 			
-			for(Iterator<Buffer> iterator = buffers.iterator(); iterator.hasNext();) {
-				Buffer buffer = iterator.next();
+			int i = 0;
+			int max = buffers.size();
+			
+			while (i < max) {
+				Buffer buffer = buffers.get(i);
 				Integer value = buffer.peek();
 				if (value == null) {
 					try {						
@@ -35,12 +37,18 @@ public class Consumer extends Thread {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					iterator = buffers.iterator();
+					i = 0;
+					continue;
 				}
 				else {
 					if (value.equals(0)) {
-						iterator.remove();
-						iterator = buffers.iterator();
+						buffers.remove(buffer);
+						i = 0;
+						max--;
+						continue;
+					}
+					else {
+						i++;
 					}
 				}
 			}
@@ -51,7 +59,12 @@ public class Consumer extends Thread {
 			
 			lock.unlock();
 			
-			Thread.yield(); // to prevent starvation of other consumers
+			// Consumer muss nach jedem Konsum kurz warten, um das Verhungern anderer Consumer zu vermeiden
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}			
 		}
 	}
 	
