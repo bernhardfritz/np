@@ -14,18 +14,18 @@ public class MainTest {
 		List<Buffer> buffers = new ArrayList<Buffer>();
 		CountDownLatch startLatch = new CountDownLatch(1);
 		
-		Lock consumerLock = new ReentrantLock();
-		Condition consumable = consumerLock.newCondition();
+		Lock lock = new ReentrantLock();
+		Condition consumable = lock.newCondition();
 		
 		
 		for(int i = 1; i <= 4; i++) {
 			Buffer buffer = new Buffer("Buffer" + i);
 			buffers.add(buffer);
-			producers.add(new Producer("Producer" + i, buffer, startLatch, consumerLock, consumable));
+			producers.add(new Producer("Producer" + i, buffer, startLatch, lock, consumable));
 		}
 		
-		Consumer consumer1 = new Consumer("Consumer1", buffers, startLatch, consumerLock, consumable);
-		Consumer consumer2 = new Consumer("Consumer2", buffers.subList(0, 2), startLatch, consumerLock, consumable);
+		Consumer consumer1 = new Consumer("Consumer1", buffers, startLatch, lock, consumable);
+		Consumer consumer2 = new Consumer("Consumer2", buffers.subList(0, 2), startLatch, lock, consumable);
 		
 		for(Producer producer : producers) {
 			producer.start();

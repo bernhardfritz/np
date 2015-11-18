@@ -10,22 +10,24 @@ public class Consumer extends Thread {
 	private List<Buffer> buffers;
 	private CountDownLatch startLatch;
 	
-	private Lock consumerLock;
+	private Lock lock;
 	private Condition consumable;
 	
-	public Consumer(String name, List<Buffer> buffers, CountDownLatch startLatch, Lock consumerLock, Condition consumable) {
+	public Consumer(String name, List<Buffer> buffers, CountDownLatch startLatch, Lock lock, Condition consumable) {
 		setName(name);
 		this.buffers = new ArrayList<Buffer>(buffers);
 		this.startLatch = startLatch;
-		this.consumerLock = consumerLock;
+		this.lock = lock;
 		this.consumable = consumable;
 	}
 	
 	private void consume() {		
 		while(buffers.size() > 0) {
-			consumerLock.lock();
+			lock.lock();
+			
 			int i = 0;
 			int max = buffers.size();
+			
 			while (i < max) {
 				Buffer buffer = buffers.get(i);
 				Integer value = buffer.peek();
@@ -55,7 +57,7 @@ public class Consumer extends Thread {
 				buffer.get();
 			}
 			
-			consumerLock.unlock();
+			lock.unlock();
 			
 			// Consumer muss nach jeder Konsumierung kurz warten, um Verhungern anderer Consumer zu vermeiden
 			try {

@@ -8,14 +8,14 @@ public class Producer extends Thread {
 	private Buffer buffer;
 	private CountDownLatch startLatch;
 	
-	private Lock consumerLock;
+	private Lock lock;
 	private Condition consumable;
 	
-	public Producer(String name, Buffer buffer, CountDownLatch startLatch, Lock consumerLock, Condition consumable) {
+	public Producer(String name, Buffer buffer, CountDownLatch startLatch, Lock lock, Condition consumable) {
 		setName(name);
 		this.buffer = buffer;
 		this.startLatch = startLatch;
-		this.consumerLock = consumerLock;
+		this.lock = lock;
 		this.consumable = consumable;
 	}
 	
@@ -23,10 +23,11 @@ public class Producer extends Thread {
 		int rand = 0;
 		do {
 			rand = (int) (Math.random()*10);
-			consumerLock.lock();
+			
+			lock.lock();
 			buffer.put(rand);
 			consumable.signalAll();
-			consumerLock.unlock();
+			lock.unlock();
 		} while(rand != 0);
 	}
 	
