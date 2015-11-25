@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class MyEvent implements Event {
 	
-	private String origin;
+	private final String origin;
 	
-	private Date date;
+	private final Date date;
 	
 	public MyEvent(String origin) {
 		this.origin = origin;
@@ -15,6 +15,6 @@ public class MyEvent implements Event {
 
 	@Override
 	public String getMessage() {
-		return "Origin: " + origin + " - " + date;
+		return "Origin: " + origin + " - Message: " + date;
 	}
 }

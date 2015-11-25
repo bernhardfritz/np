@@ -1,57 +1,68 @@
 package exercise1;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EventGeneratorThread extends Thread implements EventSource {
 	private static ThreadLocal<List<EventListener>> listeners = new ThreadLocal<List<EventListener>>() {
 		@Override
 		public List<EventListener> initialValue() {
-			System.out.println("Created for " + Thread.currentThread().getName());
 			return new ArrayList<EventListener>();
 		}
 	};
 	
-	public static List<EventListener> get() {
-//		List<EventListener> list = listeners.get();
-//		if (list == null) {
-//			list = new ArrayList<EventListener>();
-//			listeners.set(list);
-//		}
-//		return list;
-		return listeners.get();
-	}
+	private List<MySafeListener> tempList;
 	
-	public EventGeneratorThread(String name) {
+	public EventGeneratorThread(String name, List<MySafeListener> listenerList) {
 		super(name);
+		this.tempList = new ArrayList<MySafeListener>(listenerList);
 	}
 
 	@Override
 	public void registerListener(EventListener e) {
-		System.out.println(Thread.currentThread().getName() + ": " + EventGeneratorThread.get());
 		listeners.get().add(e);
-		System.out.println(Thread.currentThread().getName() + ": " + EventGeneratorThread.get());
 	}
 	
 	@Override
 	public void run() {
+		for (MySafeListener msl : tempList) {
+			MySafeListener.register(msl, this);
+		}
 		
 		while(true) {
 			for (EventListener el : listeners.get()) {
-				el.onEvent(new MyEvent(getName()));
+				final Event event = new MyEvent(getName());
+				el.onEvent(event);
 			}
+			
+			if (interrupted()) {
+				infoListeningObjects();
+			}
+			
+			Long start = System.currentTimeMillis();
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				infoListeningObjects();
+				
+				Long toSleep = 3000 - (System.currentTimeMillis() - start);
+				try {
+					Thread.sleep(Math.max(0, toSleep));
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
 	
 	public void infoListeningObjects() {
-		System.out.println("[INFO] Listening objects from " + getName() + ":");
+		StringBuilder sb = new StringBuilder();
+		sb.append("[INFO] Listening objects from " + getName() + ":");
 		for (EventListener el : listeners.get()) {
-			System.out.println(el.getName());
+			sb.append(" " + el.getName());
 		}
+		sb.append(" - " + new Date());
+		System.out.println(sb.toString());
 	}
 }

@@ -15,13 +15,16 @@ public class MySafeListener {
         };
     }
 
-    public static MySafeListener newInstance(String name, EventSource source) {
+    public static MySafeListener newInstance(String name) {
         MySafeListener safe = new MySafeListener(name);
-        source.registerListener(safe.listener);
         return safe;
     }
+    
+    public static void register(MySafeListener safe, EventSource source) {
+    	source.registerListener(safe.listener);
+    }
 
-    void doSomething(Event e) {
-    	System.out.println(Thread.currentThread().getName() + ": " + e.getMessage());
+    public void doSomething(Event e) {
+    	System.out.println("[" + listener.getName() + "] " +  e.getMessage());
     }
 }
