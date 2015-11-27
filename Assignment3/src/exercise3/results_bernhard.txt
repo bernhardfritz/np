@@ -1,0 +1,95 @@
+MacBook Pro (Retina, 13-inch, Mid 2014)
+Processor: 2,8 GHz Intel Core i5
+Memory: 8 GB 1600 MHz DDR3
+OS: OS X El Capitan Version 10.11.1
+Java: Version 1.8.0_25
+
+Without synchronization:
+========================
+# of threads | HashMap accesses per second (50% insert, 25% read, 25% remove)
+--------------------------------------------------------------------------------
+1            | 2127660
+2            | 3448276
+4            | 3225806
+8            | 1975309
+16           | 1886792
+
+With synchronization:
+=====================
+# of threads | HashMap accesses per second (50% insert, 25% read, 25% remove)
+--------------------------------------------------------------------------------
+1            | 3448276
+2            | 5263158
+4            | 3636364
+8            | 2564103
+16           | 2292264
+
+Concurrent:
+===========
+# of threads | HashMap accesses per second (50% insert, 25% read, 25% remove)
+--------------------------------------------------------------------------------
+1            | 3846154
+2            | 3508772
+4            | 2531646
+8            | 1985112
+16           | 1963190
+
+Without synchronization:
+========================
+# of threads | HashMap accesses per second (80% insert, 15% read, 5% remove)
+--------------------------------------------------------------------------------
+1            | 1428571
+2            | 2469136
+4            | 1342282
+8            | 1152738
+16           | 1075992
+
+With synchronization:
+=====================
+# of threads | HashMap accesses per second (80% insert, 15% read, 5% remove)
+--------------------------------------------------------------------------------
+1            | 3125000
+2            | 2298851
+4            | 1587302
+8            | 1307190
+16           | 1211204
+
+Concurrent:
+===========
+# of threads | HashMap accesses per second (80% insert, 15% read, 5% remove)
+--------------------------------------------------------------------------------
+1            | 3125000
+2            | 2898551
+4            | 1731602
+8            | 1372213
+16           | 1222307
+
+Without synchronization:
+========================
+# of threads | HashMap accesses per second (5% insert, 90% read, 5% remove)
+--------------------------------------------------------------------------------
+1            | 2702703
+2            | 4878049
+4            | 1101928
+8            | 911162
+16           | 973828
+
+With synchronization:
+=====================
+# of threads | HashMap accesses per second (5% insert, 90% read, 5% remove)
+--------------------------------------------------------------------------------
+1            | 3846154
+2            | 2666667
+4            | 1139601
+8            | 988875
+16           | 1021059
+
+Concurrent:
+===========
+# of threads | HashMap accesses per second (5% insert, 90% read, 5% remove)
+--------------------------------------------------------------------------------
+1            | 4166667
+2            | 2531646
+4            | 1183432
+8            | 996264
+16           | 1003764
