@@ -5,19 +5,21 @@ import java.util.List;
 
 public class TestBench {
 	public static void main(String[] args) {
-		List<Double> results = new ArrayList<Double>();
-		for(int i = 1; i <= 20; i++) {
-			Stopwatch stopWatch = new Stopwatch();
+		List<Double> taskTimes = new ArrayList<Double>();
+		List<Double> totalTimes = new ArrayList<Double>();
+		int numberOfThreads[] = {1, 2, 4, 80, 160, 320, 1024, 2048};
+		for(int i : numberOfThreads) {
 			String[] arr = {String.valueOf(i)};
 			CalculatePi.main(arr);
-			results.add(stopWatch.elapsedTime());
+			taskTimes.add(CalculatePi.taskTime);
+			totalTimes.add(CalculatePi.totalTime);
 		}
-		System.out.println("#threads|\ttask time[s]\ttime[s]");
-		System.out.println("-----------------------");
-		for(int i = 1; i <= 20; i++) {
-			
-			System.out.println(i + "\t|\t" + results.get(i-1));
+		System.out.println("#threads|\ttask time[s]\ttotal time[s]");
+		System.out.println("---------------------------------------------");
+		int count = 0;
+		for(int i : numberOfThreads) {
+			System.out.println(i + "\t|\t" + taskTimes.get(count) + "\t|\t" + totalTimes.get(count));
+			count++;
 		}
 	}
-
 }

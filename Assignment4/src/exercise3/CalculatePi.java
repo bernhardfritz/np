@@ -3,14 +3,11 @@ package exercise3;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class CalculatePi {
+	public static double taskTime;
+	public static double totalTime;
+	
 	public static int getAmountOfCorrectFractions(BigDecimal experiment, BigDecimal control) {
 		if(!experiment.toBigInteger().equals(control.toBigInteger())) {
 			return 0;
@@ -27,47 +24,46 @@ public class CalculatePi {
 	}
 	
 	public static void main(String[] args) {
-		int threadCount = 20;
+		int numberOfThreads = 0;
 		if(args.length > 0) {
-			System.out.println("Program argument detected. Using " + args[0] + " threads to calculate PI.");
-			threadCount = Integer.valueOf(args[0]);
+			System.out.println("Using " + args[0] + " threads to calculate PI.");
+			numberOfThreads = Integer.valueOf(args[0]);
+		} else {
+			System.out.println("Usage: CalculatePi numberOfThreads");
+			System.out.println("E.g: CalculatePi 42");
+			System.exit(1);
 		}
-		int n = 100000000;
-		int stepsPerThread = n/threadCount; // int division
+		int n = 10000000;
+		int stepsPerThread = n / numberOfThreads; // int division
 		
-		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-		BigDecimal result = BigDecimal.ZERO;
-		List<Callable<BigDecimal>> callables = new ArrayList<Callable<BigDecimal>>();
-		for(int i = 0; i < threadCount; i++) {
-			int from = i*stepsPerThread;
-			int to = i*stepsPerThread+stepsPerThread;
-			if(i == threadCount - 1) { // last thread has to do more work if n%threadCount != 0
+		List<CalculatePartOfPi> partsOfPi = new ArrayList<CalculatePartOfPi>();
+		Stopwatch stopWatchTotalTime = new Stopwatch();
+		for(int i = 0; i < numberOfThreads; i++) {
+			int from = i * stepsPerThread;
+			int to = i * stepsPerThread + stepsPerThread;
+			if(i == numberOfThreads - 1) { // last thread has to do more work if n % threadCount != 0
 				to = n;
 			}
-			callables.add(new CalculateTask(from, to));
+			partsOfPi.add(new CalculatePartOfPi(from, to));
 		}
-		List<Future<BigDecimal>> futures = null;
-		try {
-			futures = executorService.invokeAll(callables);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+		
+		Stopwatch stopWatchTaskTime = new Stopwatch();
+		for(CalculatePartOfPi partOfPi : partsOfPi) {
+			partOfPi.start();
 		}
-		for(Future<BigDecimal> future: futures) {
+		
+		BigDecimal result = BigDecimal.ZERO;
+		for(CalculatePartOfPi partOfPi : partsOfPi) {
 			try {
-				result = result.add(future.get());
+				result = result.add(partOfPi.get());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
 		}
-			
-		executorService.shutdown();
-		try {
-			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		taskTime = stopWatchTaskTime.elapsedTime();
+		totalTime = stopWatchTotalTime.elapsedTime();
+		
+		
 		System.out.println("experiment PI:\t" + result.multiply(BigDecimal.valueOf(4)));
 		System.out.println("control PI:\t" + Math.PI);
 		System.out.print("\t\t  ");
