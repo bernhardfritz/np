@@ -1,7 +1,20 @@
 package exercise1;
 
+/**
+ * Main contains a main method and showcases the use of RandomNumberGenerator-, RandomNumberFilter-, Server- and Client-Thread. 
+ */
 public class Main {
-	public static void main(String[] args) throws InterruptedException {
+	/**
+	 * Starts a RandomNumberGenerator-, RandomNumberFilter-, Server- and Client-Thread.
+	 * RandomNumberGenerator will be stopped by calling its done() method.
+	 * RandomNumberFilter will be stopped by a poisonPill from RandomNumberGenerator.
+	 * Server will be stopped by calling its done() method.
+	 * Client will be stopped by its interrupt() method.
+	 * It's important to note that Client will only be interrupted without restoration if it is explicitly disabled by calling its disableRestoration method.
+	 * This method needs the this reference. If the this reference is an instance of Main the restoration procedure will be disabled. 
+	 * @throws InterruptedException If sleep or join is interrupted.
+	 */
+	public void doSomething() throws InterruptedException {
 		Buffer buffer1 = new Buffer();
 		Buffer buffer2 = new Buffer();
 		
@@ -26,8 +39,14 @@ public class Main {
 		thread3.done();
 		thread3.join();
 		System.out.println("Thread3 finished!");
+		thread4.disableRestoration(this);
 		thread4.interrupt();
 		thread4.join();
 		System.out.println("Thread4 finished!");
+	}
+	
+	public static void main(String[] args) throws InterruptedException {
+		Main m = new Main();
+		m.doSomething();
 	}
 }

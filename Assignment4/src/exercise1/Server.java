@@ -5,6 +5,9 @@ import java.io.*;
 
 // Acts as consumer of filtered random numbers and writes them into a socket
 // aka Thread 3
+/**
+ * Consumes numbers from a thread-safe Buffer object called "in" and sends them to a socket until done() is called. 
+ */
 public class Server extends Thread{
 	private ServerSocket connectionSocket;
 	private Socket serverSocket;
@@ -17,17 +20,17 @@ public class Server extends Thread{
 		this.in = in;
 	}
 	
-	public void consume() {
+	private void consume() {
 		Integer number = in.get();
 		if(number == null) return;
 		send(number);
 	}
 
-	public void send(int number) {
+	private void send(int number) {
 		out.println(number);
 	}
 
-	public void destroy() {
+	private void close() {
 		try {
 			out.close();
 			serverSocket.close();
@@ -39,6 +42,9 @@ public class Server extends Thread{
 		}
 	}
 	
+	/**
+	 * Call this method to stop the Thread safely
+	 */
 	public void done() {
 		done = true;
 	}
@@ -63,6 +69,6 @@ public class Server extends Thread{
 			}
 		}
 		
-		destroy();
+		close();
 	}
 }
