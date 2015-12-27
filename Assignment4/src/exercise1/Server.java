@@ -11,6 +11,7 @@ public class Server extends Thread{
 	private Buffer in;
 	private PrintWriter out;
 	private final int port = 9090;
+	private boolean done = false;
 
 	public Server(Buffer in) {
 		this.in = in;
@@ -37,6 +38,10 @@ public class Server extends Thread{
 			e.printStackTrace();
 		}
 	}
+	
+	public void done() {
+		done = true;
+	}
 
 	public void run() {
 		try {
@@ -49,8 +54,13 @@ public class Server extends Thread{
 			e.printStackTrace();
 		}
 		
-		while (!isInterrupted()) {
+		while (!done) {
 			consume();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		destroy();

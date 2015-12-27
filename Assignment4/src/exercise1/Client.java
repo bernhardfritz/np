@@ -48,6 +48,11 @@ public class Client extends Thread{
 		
 		while (!isInterrupted()) {
 			receive();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				interrupt(); // should only be called if Main is the interrupt source
+			}
 		}
 		
 		destroy();

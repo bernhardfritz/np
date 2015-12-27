@@ -6,6 +6,7 @@ public class RandomNumberGenerator extends Thread{
 	private Buffer out;
 	private final int from = 0;
 	private final int to = 41;
+	private boolean done = false;
 	
 	public RandomNumberGenerator(Buffer out) {
 		this.out = out;
@@ -15,14 +16,18 @@ public class RandomNumberGenerator extends Thread{
 		int number = from + (int)(Math.random() * (to - from + 1));
 		out.put(number);
 	}
+	
+	public void done() {
+		done = true;
+	}
 
 	public void run() {
-		while(!isInterrupted()) {
+		while(!done) {
 			produce();
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				interrupt();
+				e.printStackTrace();
 			}
 		}
 		out.put(42); // poisonPill for consumer
