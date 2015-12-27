@@ -33,7 +33,7 @@ public class CalculatePi {
 			System.out.println("E.g: CalculatePi 42");
 			System.exit(1);
 		}
-		int n = 10000000;
+		int n = 100000000;
 		int stepsPerThread = n / numberOfThreads; // int division
 		
 		List<CalculatePartOfPi> partsOfPi = new ArrayList<CalculatePartOfPi>();
